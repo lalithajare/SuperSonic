@@ -1,29 +1,20 @@
 package com.supersonic.app
 
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.io.File
 import java.lang.RuntimeException
-import java.util.jar.Manifest
-import android.R.id
-import android.content.CursorLoader
-import android.widget.Toast
-import android.widget.LinearLayout
-import android.graphics.BitmapFactory
-import android.graphics.Bitmap
+import android.annotation.SuppressLint
+import android.database.Cursor
+import android.os.AsyncTask
+import android.view.View
 
 
-class MainActivity : AppCompatActivity() {
+class TracksActivity : BaseActivity(), View.OnClickListener {
 
     private val REQ_READ_PERM = 994
 
@@ -31,14 +22,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mMusicAdapter: MusicTrackAdapter
 
-    private var mList = ArrayList<MusicTrackDetails>()
+    private var mTrackList = ArrayList<MusicTrackDetails>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
-        initActionbar()
+        initActionbar(getString(R.string.tracks))
 
         initViews()
 
@@ -56,21 +47,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun initActionbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.findViewById<TextView>(R.id.txt_title).text = "Tracks"
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setDisplayShowHomeEnabled(false)
-        supportActionBar?.setDisplayShowCustomEnabled(true)
-    }
 
     private fun initViews() {
         recyclerFiles = findViewById(R.id.recycler_files)
     }
 
     private fun setAdapter() {
-        mMusicAdapter = MusicTrackAdapter(mList)
+        mMusicAdapter = MusicTrackAdapter(mTrackList, this)
         recyclerFiles.adapter = mMusicAdapter
         recyclerFiles.layoutManager = LinearLayoutManager(this)
         recyclerFiles.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
@@ -108,36 +91,59 @@ class MainActivity : AppCompatActivity() {
                 musicTrack.musicFileArtist = c.getString(c.getColumnIndex(MediaStore.Audio.Media.ARTIST))
                 musicTrack.musicFileTrack = c.getString(c.getColumnIndex(MediaStore.Audio.Media.TRACK))
 
-//                musicTrack.musicFileThumb = getThumbnail(c.getInt(c.getColumnIndex(MediaStore.Images.Media._ID)))
-
-
-                val albumId =
+                musicTrack.musicFileAlbumId =
                     java.lang.Long.valueOf(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)))
-                val cursorAlbum = contentResolver.query(
-                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                    arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART),
-                    MediaStore.Audio.Albums._ID + "=" + albumId, null, null
-                )
-
-                if (cursorAlbum != null && cursorAlbum.moveToFirst()) {
-                    val albumCoverPath =
-                        cursorAlbum.getString(cursorAlbum.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
-                    val data = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DATA))
-                    musicTrack.musicFileThumb = albumCoverPath
-                }
 
                 musicTrack.musicFileTitle = c.getString(c.getColumnIndex(MediaStore.Audio.Media.TITLE))
                 musicTrack.musicFileDisplayName = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
                 musicTrack.musicFileUrl = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DATA))
                 musicTrack.musicFileDuration = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DURATION))
                 musicTrack.musicFileYear = c.getString(c.getColumnIndex(MediaStore.Audio.Media.YEAR))
-                mList.add(musicTrack)
+                mTrackList.add(musicTrack)
             }
         } else {
             // ERROR
             throw RuntimeException("Error while getting information of Music File")
         }
         mMusicAdapter.notifyDataSetChanged()
+
+        loadImageTask.execute(c)
+
+    }
+
+    private val loadImageTask = @SuppressLint("StaticFieldLeak")
+    object : AsyncTask<Cursor, Void, Void>() {
+
+        private var cursor: Cursor? = null
+
+        override fun doInBackground(vararg params: Cursor): Void? {
+            cursor = params[0]
+            loadImagesForTracks(cursor!!)
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            super.onPostExecute(result)
+            mMusicAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun loadImagesForTracks(c: Cursor) {
+        for (musicTrack in mTrackList) {
+            val cursorAlbum = contentResolver.query(
+                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART),
+                MediaStore.Audio.Albums._ID + "=" + musicTrack.musicFileAlbumId, null, null
+            )
+
+            if (cursorAlbum != null && cursorAlbum.moveToFirst()) {
+                val albumCoverPath =
+                    cursorAlbum.getString(cursorAlbum.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
+                musicTrack.musicFileThumb = albumCoverPath
+            }
+            cursorAlbum?.close()
+        }
+        c.close()
     }
 
 
@@ -150,5 +156,17 @@ class MainActivity : AppCompatActivity() {
             loadTracks()
         }
     }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.item_music_track -> {
+                if (v.tag != null && v.tag is MusicTrackDetails) {
+                    val musicTrackDetails = v.tag as MusicTrackDetails
+                    TrackDetailsActivity.ActivtyStarter.beginWith(this, musicTrackDetails)
+                }
+            }
+        }
+    }
+
 
 }

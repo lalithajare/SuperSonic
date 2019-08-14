@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 
-class MusicTrackViewHolder(itemView: View) : ViewHolder(itemView) {
+class MusicTrackViewHolder(itemView: View, var mListener: View.OnClickListener) : ViewHolder(itemView) {
 
     private val imgThumb: ImageView = itemView.findViewById(R.id.img_thumb)
     private val txtMusicTitle: TextView = itemView.findViewById(R.id.txt_music_title)
@@ -26,7 +26,12 @@ class MusicTrackViewHolder(itemView: View) : ViewHolder(itemView) {
             Glide.with(itemView.context)
                 .load(musicFile.musicFileThumb)
                 .into(imgThumb)
+        }else{
+            imgThumb.setImageResource(android.R.drawable.ic_menu_crop)
         }
+
+        itemView.tag = musicFile
+        itemView.setOnClickListener(mListener)
     }
 
 }

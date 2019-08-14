@@ -1,7 +1,10 @@
 package com.supersonic.app
 
-data class MusicTrackDetails(var id: Long) {
+import java.io.Serializable
+
+data class MusicTrackDetails(var id: Long) : Serializable {
     var musicFileTitle: String? = ""
+    var musicFileAlbumId: Long = 0L
     var musicFileDisplayName: String? = ""
     var musicFileArtist: String? = ""
     var musicFileThumb: String? = ""
