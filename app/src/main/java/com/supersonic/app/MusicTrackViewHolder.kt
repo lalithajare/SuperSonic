@@ -14,15 +14,15 @@ class MusicTrackViewHolder(itemView: View) : ViewHolder(itemView) {
     override fun onBindView(model: Any) {
         val musicFile = model as MusicTrackDetails
 
-        if (musicFile.musicFileTitle.isNotBlank()) {
+        if (musicFile.musicFileTitle != null && musicFile.musicFileTitle!!.isNotBlank()) {
             txtMusicTitle.text = musicFile.musicFileTitle
         }
 
-        if (musicFile.musicFileArtist.isNotBlank()) {
+        if (musicFile.musicFileArtist != null && musicFile.musicFileArtist!!.isNotBlank()) {
             txtMusicAuthor.text = musicFile.musicFileArtist
         }
 
-        if (musicFile.musicFileThumb.isNotBlank()) {
+        if (musicFile.musicFileThumb != null && musicFile.musicFileThumb!!.isNotBlank()) {
             Glide.with(itemView.context)
                 .load(musicFile.musicFileThumb)
                 .into(imgThumb)
