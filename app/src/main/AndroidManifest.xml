@@ -6,15 +6,20 @@
 
     <application
             android:allowBackup="true"
+            android:name=".common.MyApplication"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".BaseActivity"></activity>
-        <activity android:name=".TrackDetailsActivity"></activity>
-        <activity
-                android:name=".TracksActivity">
+        <service
+                android:name=".common.MusicService"
+                android:enabled="true"
+                android:exported="true"></service>
+
+        <activity android:name=".common.BaseActivity"/>
+        <activity android:name=".tracks.screens.TrackDetailsActivity"/>
+        <activity android:name=".tracks.screens.TracksActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

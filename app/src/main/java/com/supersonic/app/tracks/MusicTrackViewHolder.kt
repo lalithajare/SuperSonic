@@ -1,9 +1,12 @@
-package com.supersonic.app
+package com.supersonic.app.tracks
 
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.supersonic.app.models.MusicTrackDetails
+import com.supersonic.app.R
+import com.supersonic.app.common.ViewHolder
 
 class MusicTrackViewHolder(itemView: View, var mListener: View.OnClickListener) : ViewHolder(itemView) {
 

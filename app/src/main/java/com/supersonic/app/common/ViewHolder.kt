@@ -1,4 +1,4 @@
-package com.supersonic.app
+package com.supersonic.app.common
 
 import android.view.View
 import android.widget.ImageView

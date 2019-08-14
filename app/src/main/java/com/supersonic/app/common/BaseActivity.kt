@@ -1,9 +1,10 @@
-package com.supersonic.app
+package com.supersonic.app.common
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import com.supersonic.app.R
 
 open class BaseActivity : AppCompatActivity() {
 

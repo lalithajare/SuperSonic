@@ -1,4 +1,4 @@
-package com.supersonic.app
+package com.supersonic.app.common.utilities
 
 import android.content.Context
 import android.provider.MediaStore

@@ -1,4 +1,4 @@
-package com.supersonic.app
+package com.supersonic.app.tracks.screens
 
 import android.content.pm.PackageManager
 import android.os.Build
@@ -7,11 +7,16 @@ import android.provider.MediaStore
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.lang.RuntimeException
 import android.annotation.SuppressLint
 import android.database.Cursor
 import android.os.AsyncTask
 import android.view.View
+import com.supersonic.app.common.BaseActivity
+import com.supersonic.app.models.MusicTrackDetails
+import com.supersonic.app.R
+import com.supersonic.app.common.MyApplication
+import com.supersonic.app.common.utilities.TracksManager
+import com.supersonic.app.tracks.MusicTrackAdapter
 
 
 class TracksActivity : BaseActivity(), View.OnClickListener {
@@ -60,51 +65,9 @@ class TracksActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun loadTracks() {
-        val c = contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-            arrayOf(
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.TRACK,
 
-                MediaStore.Images.Media._ID,
-                MediaStore.Audio.Media.ALBUM_ID,
+        val c = MyApplication.appInstance!!.trackManager!!.initAllTracks(mTrackList)
 
-                MediaStore.Images.Media.DATA,
-
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.YEAR
-            ),
-            null,
-            null,
-            null
-        )
-
-
-        if (c != null) {
-            while (c.moveToNext()) {
-                val musicTrack = MusicTrackDetails(0L)
-                musicTrack.musicFileAlbum = c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                musicTrack.musicFileArtist = c.getString(c.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                musicTrack.musicFileTrack = c.getString(c.getColumnIndex(MediaStore.Audio.Media.TRACK))
-
-                musicTrack.musicFileAlbumId =
-                    java.lang.Long.valueOf(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)))
-
-                musicTrack.musicFileTitle = c.getString(c.getColumnIndex(MediaStore.Audio.Media.TITLE))
-                musicTrack.musicFileDisplayName = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                musicTrack.musicFileUrl = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DATA))
-                musicTrack.musicFileDuration = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                musicTrack.musicFileYear = c.getString(c.getColumnIndex(MediaStore.Audio.Media.YEAR))
-                mTrackList.add(musicTrack)
-            }
-        } else {
-            // ERROR
-            throw RuntimeException("Error while getting information of Music File")
-        }
         mMusicAdapter.notifyDataSetChanged()
 
         loadImageTask.execute(c)
@@ -162,7 +125,7 @@ class TracksActivity : BaseActivity(), View.OnClickListener {
             R.id.item_music_track -> {
                 if (v.tag != null && v.tag is MusicTrackDetails) {
                     val musicTrackDetails = v.tag as MusicTrackDetails
-                    TrackDetailsActivity.ActivtyStarter.beginWith(this, musicTrackDetails)
+                    TrackDetailsActivity.beginWith(this, musicTrackDetails)
                 }
             }
         }
