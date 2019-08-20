@@ -6,6 +6,8 @@ interface TrackCallbacks {
 
     fun onTrackFinished()
 
+    fun onTrackStopped()
+
     fun onTrackPaused()
 
     fun onTrackResumed()

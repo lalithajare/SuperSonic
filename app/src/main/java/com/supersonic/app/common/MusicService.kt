@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -16,8 +17,9 @@ import com.supersonic.app.common.interfaces.TrackCallbacks
 import com.supersonic.app.common.utilities.Constants
 import com.supersonic.app.models.MusicTrackDetails
 import com.supersonic.app.tracks.screens.TrackDetailsActivity
+import com.supersonic.app.tracks.screens.TracksActivity
 
-class MusicService() : Service() {
+class MusicService : Service() {
 
     private val mBinder = LocalBinder()
 
@@ -38,21 +40,21 @@ class MusicService() : Service() {
             }
         }
 
-        class NotificationPlaybackHandler : BroadcastReceiver() {
-
-            override fun onReceive(context: Context, intent: Intent) {
-
-                Toast.makeText(context, "Playback Clicked", Toast.LENGTH_SHORT).show()
-                if (isTrackRunning) {
-                    mTracksManager?.pauseAudio()
-                    isTrackRunning = false
-                } else {
-                    mTracksManager?.resumeAudio()
-                    isTrackRunning = true
-                }
-
-            }
-        }
+//        class NotificationPlaybackHandler : BroadcastReceiver() {
+//
+//            override fun onReceive(context: Context, intent: Intent) {
+//
+//                Toast.makeText(context, "Playback Clicked", Toast.LENGTH_SHORT).show()
+//                if (isTrackRunning) {
+//                    mTracksManager?.pauseAudio()
+//                    isTrackRunning = false
+//                } else {
+//                    mTracksManager?.resumeAudio()
+//                    isTrackRunning = true
+//                }
+//
+//            }
+//        }
 
     }
 
@@ -63,14 +65,77 @@ class MusicService() : Service() {
 
         mTracksManager?.initMedia()
 
+        playTrack()
+
         return mBinder
     }
+
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        if (intent?.action.equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
+            val notificationIntent = Intent(this, TracksActivity::class.java)
+//        notificationIntent.action = Constants.ACTION.MAIN_ACTION
+//        notificationIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            val pendingIntent = PendingIntent.getActivity(
+                this, 0,
+                notificationIntent, 0
+            )
+
+            val closeIntent = Intent(this, MusicService::class.java)
+            closeIntent.action = Constants.ACTION.STOPFOREGROUND_ACTION
+
+            val pCloseIntent = PendingIntent.getService(
+                this, 0,
+                closeIntent, 0
+            )
+
+            val notification = NotificationCompat.Builder(this)
+                .setContentTitle("Truiton Music Player")
+                .setTicker("Truiton Music Player")
+                .setContentText("My Music")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .addAction(
+                    android.R.drawable.ic_menu_close_clear_cancel,
+                    "Close", pCloseIntent
+                ).build()
+            startForeground(
+                Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                notification
+            )
+
+        } else if (intent?.action.equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
+            Log.i("MusicService", "Received Stop Foreground Intent")
+            stopForeground(true)
+            stopSelf()
+        }
+
+
+        return START_NOT_STICKY
+    }
+
+    inner class LocalBinder : Binder() {
+        fun getService(): MusicService = this@MusicService
+    }
+
 
     fun playTrack() {
 
         mTracksManager?.playAudio(mMusicTrackDetails?.musicFileUrl!!)
 
         trackCallbacks?.onTrackLoaded()
+
+        isTrackRunning = true
+
+    }
+
+    fun stopTrack() {
+
+        mTracksManager?.stopAudio()
+
+        trackCallbacks?.onTrackStopped()
 
         isTrackRunning = true
 
@@ -106,66 +171,6 @@ class MusicService() : Service() {
 
     fun prevTrack() {
         mTracksManager?.previousAudio()
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-        val notificationIntent = Intent(this, TrackDetailsActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0,
-            notificationIntent, 0
-        )
-        val notificationView = RemoteViews(this.packageName, R.layout.layout_track_notification)
-
-        val buttonCloseIntent =
-            Intent(this, MusicService.Companion.NotificationCloseButtonHandler::class.java)
-        buttonCloseIntent.putExtra("action", "close")
-        val buttonClosePendingIntent = PendingIntent.getBroadcast(this, 0, buttonCloseIntent, 0)
-        notificationView.setOnClickPendingIntent(R.id.img_close, buttonClosePendingIntent)
-        notificationView.setOnClickPendingIntent(R.id.rel_notification_layout, pendingIntent)
-
-        val icon = BitmapFactory.decodeResource(
-            resources,
-            R.mipmap.ic_launcher
-        )
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val NOTIFICATION_CHANNEL_ID = "RBL_CHANNEL_13310"
-        val notification: Notification
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel =
-                NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    "Foreground service notification channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-                );
-
-            notificationManager.createNotificationChannel(notificationChannel)
-            notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-                .setCustomContentView(notificationView)
-                .setCustomBigContentView(notificationView)
-                .setOngoing(true).build()
-        } else {
-            notification = NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-                .setCustomContentView(notificationView)
-                .setCustomBigContentView(notificationView)
-                .setOngoing(true).build()
-        }
-
-        startForeground(
-            101,
-            notification
-        )
-
-        return START_STICKY
-    }
-
-    inner class LocalBinder : Binder() {
-        fun getService(): MusicService = this@MusicService
     }
 
 }

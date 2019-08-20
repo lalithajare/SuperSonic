@@ -49,14 +49,16 @@
             android:layout_height="wrap_content"/>
 
 
-    <ImageView
+    <Button
             android:padding="@dimen/dimen_size_5"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:id="@+id/img_close"
             android:layout_width="24dp"
+            android:clickable="true"
             android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"/>
+            android:background="@android:drawable/ic_menu_close_clear_cancel"
+            android:src="@android:drawable/ic_menu_close_clear_cancel" android:focusable="true"/>
 
 
 </RelativeLayout>

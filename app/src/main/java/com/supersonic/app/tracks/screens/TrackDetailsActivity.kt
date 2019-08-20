@@ -51,6 +51,7 @@ class TrackDetailsActivity : BaseActivity(), View.OnClickListener, TrackCallback
     private val mConnection = object : ServiceConnection {
         override fun onServiceDisconnected(name: ComponentName?) {
             mBound = false
+            mService?.stopTrack()
         }
 
 
@@ -66,9 +67,9 @@ class TrackDetailsActivity : BaseActivity(), View.OnClickListener, TrackCallback
             mBound = true
 
             mService?.trackCallbacks = this@TrackDetailsActivity
-
-            mService?.playTrack()
         }
+
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,6 +91,7 @@ class TrackDetailsActivity : BaseActivity(), View.OnClickListener, TrackCallback
     private fun initService() {
         val intent = Intent(this@TrackDetailsActivity, MusicService::class.java)
         intent.putExtra(Constants.MUSIC_OBJ, mMusicTrackDetails)
+        intent.action = Constants.ACTION.STARTFOREGROUND_ACTION
         startService(intent)
         bindService(intent, mConnection, 0)
     }
@@ -150,6 +152,9 @@ class TrackDetailsActivity : BaseActivity(), View.OnClickListener, TrackCallback
                         imgPlayBack.setImageResource(android.R.drawable.ic_media_pause)
                         mService?.resumeAudio()
                     }
+                } else {
+                    initService()
+                    imgPlayBack.setImageResource(android.R.drawable.ic_media_pause)
                 }
             }
 
@@ -178,18 +183,27 @@ class TrackDetailsActivity : BaseActivity(), View.OnClickListener, TrackCallback
 
     override fun onTrackLoaded() {
         isTrackPlaying = true
+        imgPlayBack.setImageResource(android.R.drawable.ic_media_pause)
+    }
+
+    override fun onTrackStopped() {
+        isTrackPlaying = false
+        imgPlayBack.setImageResource(android.R.drawable.ic_media_play)
     }
 
     override fun onTrackFinished() {
         isTrackPlaying = false
+        imgPlayBack.setImageResource(android.R.drawable.ic_media_play)
     }
 
     override fun onTrackPaused() {
         isTrackPlaying = false
+        imgPlayBack.setImageResource(android.R.drawable.ic_media_play)
     }
 
     override fun onTrackResumed() {
         isTrackPlaying = true
+        imgPlayBack.setImageResource(android.R.drawable.ic_media_pause)
     }
 
     override fun onTrackFFW() {
