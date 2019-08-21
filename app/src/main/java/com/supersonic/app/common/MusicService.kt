@@ -4,20 +4,16 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.supersonic.app.R
 import com.supersonic.app.common.interfaces.TrackCallbacks
 import com.supersonic.app.common.utilities.Constants
 import com.supersonic.app.models.MusicTrackDetails
-import com.supersonic.app.tracks.screens.TrackDetailsActivity
-import com.supersonic.app.tracks.screens.TracksActivity
+import com.supersonic.app.tracks.screens.tracklist.TracksListActivity
 
 class MusicService : Service() {
 
@@ -74,7 +70,7 @@ class MusicService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         if (intent?.action.equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-            val notificationIntent = Intent(this, TracksActivity::class.java)
+            val notificationIntent = Intent(this, TracksListActivity::class.java)
 //        notificationIntent.action = Constants.ACTION.MAIN_ACTION
 //        notificationIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             val pendingIntent = PendingIntent.getActivity(

@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">SuperSonic</string>
-    <string name="tracks">Tracks</string>
     <string name="track_details">Tracks Details</string>
+    <string name="tracks">Tracks</string>
 </resources>

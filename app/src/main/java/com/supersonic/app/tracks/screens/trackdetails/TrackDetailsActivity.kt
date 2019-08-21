@@ -1,4 +1,4 @@
-package com.supersonic.app.tracks.screens
+package com.supersonic.app.tracks.screens.trackdetails
 
 import android.content.ComponentName
 import android.content.Intent
@@ -210,6 +210,11 @@ class TrackDetailsActivity : BaseActivity(), View.OnClickListener, TrackCallback
     }
 
     override fun onTrackREW() {
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mService?.unbindService(mConnection)
     }
 
 }

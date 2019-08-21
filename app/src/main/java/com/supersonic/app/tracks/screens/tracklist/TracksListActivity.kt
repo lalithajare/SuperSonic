@@ -1,44 +1,35 @@
-package com.supersonic.app.tracks.screens
+package com.supersonic.app.tracks.screens.tracklist
 
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.annotation.SuppressLint
 import android.database.Cursor
 import android.os.AsyncTask
-import android.view.View
 import com.supersonic.app.common.BaseActivity
 import com.supersonic.app.models.MusicTrackDetails
-import com.supersonic.app.R
 import com.supersonic.app.common.MyApplication
-import com.supersonic.app.common.utilities.TracksManager
-import com.supersonic.app.tracks.MusicTrackAdapter
+import com.supersonic.app.tracks.screens.trackdetails.TrackDetailsActivity
 
 
-class TracksActivity : BaseActivity(), View.OnClickListener {
+class TracksListActivity : BaseActivity(), TrackListMvc.Listener {
 
     private val REQ_READ_PERM = 994
-
-    private lateinit var recyclerFiles: RecyclerView
-
-    private lateinit var mMusicAdapter: MusicTrackAdapter
-
     private var mTrackList = ArrayList<MusicTrackDetails>()
+
+    private lateinit var mViewMvc: TrackListMvc
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
+        mViewMvc = TrackListMvcImpl(layoutInflater, null)
 
-        initActionbar(getString(R.string.tracks))
+        mViewMvc.registerListener(this)
 
-        initViews()
+        setContentView(mViewMvc.getRootView())
 
-        setAdapter()
+        initActionbar("Tracks")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -49,26 +40,15 @@ class TracksActivity : BaseActivity(), View.OnClickListener {
         } else {
             loadTracks()
         }
-
     }
 
 
-    private fun initViews() {
-        recyclerFiles = findViewById(R.id.recycler_files)
-    }
-
-    private fun setAdapter() {
-        mMusicAdapter = MusicTrackAdapter(mTrackList, this)
-        recyclerFiles.adapter = mMusicAdapter
-        recyclerFiles.layoutManager = LinearLayoutManager(this)
-        recyclerFiles.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
-    }
 
     private fun loadTracks() {
 
         val c = MyApplication.appInstance!!.trackManager!!.initAllTracks(mTrackList)
 
-        mMusicAdapter.notifyDataSetChanged()
+        mViewMvc.updateMusicList(mTrackList)
 
         loadImageTask.execute(c)
 
@@ -87,7 +67,7 @@ class TracksActivity : BaseActivity(), View.OnClickListener {
 
         override fun onPostExecute(result: Void?) {
             super.onPostExecute(result)
-            mMusicAdapter.notifyDataSetChanged()
+            mViewMvc.updateMusicList(mTrackList)
         }
     }
 
@@ -120,16 +100,16 @@ class TracksActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.item_music_track -> {
-                if (v.tag != null && v.tag is MusicTrackDetails) {
-                    val musicTrackDetails = v.tag as MusicTrackDetails
-                    TrackDetailsActivity.beginWith(this, musicTrackDetails)
-                }
-            }
-        }
+    override fun onTrackClickedListener(musicTrackDetails: MusicTrackDetails) {
+        TrackDetailsActivity.beginWith(
+            this,
+            musicTrackDetails
+        )
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mViewMvc.unregisterListener(this)
+    }
 
 }
