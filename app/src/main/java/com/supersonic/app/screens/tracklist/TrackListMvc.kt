@@ -5,6 +5,7 @@ import android.view.View
 import com.supersonic.app.models.MusicTrackDetails
 
 interface TrackListMvc {
+
     interface Listener {
 
         fun onTrackClickedListener(musicTrackDetails: MusicTrackDetails)

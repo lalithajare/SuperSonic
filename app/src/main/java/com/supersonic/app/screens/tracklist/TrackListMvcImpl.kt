@@ -51,7 +51,7 @@ class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?) : MusicT
     }
 
     private fun <T : View> findViewById(id: Int): T {
-        return getRootView().findViewById<T>(id)
+        return getRootView().findViewById(id)
     }
 
     override fun setAdapter() {
