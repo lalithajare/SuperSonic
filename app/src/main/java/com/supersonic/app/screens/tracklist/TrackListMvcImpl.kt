@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.supersonic.app.R
 import com.supersonic.app.models.MusicTrackDetails
+import com.supersonic.app.screens.tracklist.TrackListItemMvc
+import com.supersonic.app.screens.tracklist.TrackListItemMvcImpl
 import com.supersonic.app.tracks.screens.trackdetails.TrackDetailsActivity
 
 
-class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?) : MusicTrackAdapter.MusicTrackClickedListener,
+class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?) : TrackListItemMvc.Listener,
     TrackListMvc {
 
     private val mListeners = ArrayList<TrackListMvc.Listener>()
@@ -21,7 +23,7 @@ class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?) : MusicT
 
     private lateinit var recyclerFiles: RecyclerView
 
-    private lateinit var mMusicAdapter: MusicTrackAdapter
+    private var mMusicAdapter: MusicTrackAdapter
 
 
     init {
@@ -57,7 +59,12 @@ class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?) : MusicT
     override fun setAdapter() {
         recyclerFiles.adapter = mMusicAdapter
         recyclerFiles.layoutManager = LinearLayoutManager(getContext())
-        recyclerFiles.addItemDecoration(DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL))
+        recyclerFiles.addItemDecoration(
+            DividerItemDecoration(
+                getContext(),
+                LinearLayoutManager.VERTICAL
+            )
+        )
     }
 
 
@@ -72,11 +79,10 @@ class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?) : MusicT
         }
     }
 
-    override fun onMusicTrackClicked(musicTrackDetails: MusicTrackDetails) {
+    override fun onTrackClicked(musicTrackDetails: MusicTrackDetails) {
         for (listener in mListeners) {
             listener.onTrackClickedListener(musicTrackDetails)
         }
     }
-
 
 }

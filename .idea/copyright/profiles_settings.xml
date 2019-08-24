@@ -1,3 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="Lalit Hajare" />
+  <settings default="Lalit Hajare">
+    <module2copyright>
+      <element module="All" copyright="Lalit Hajare - Android Developer" />
+    </module2copyright>
+  </settings>
 </component>

@@ -12,9 +12,8 @@ import com.supersonic.app.common.PermissionManager
 import com.supersonic.app.tracks.screens.trackdetails.TrackDetailsActivity
 
 
-class TracksListActivity : BaseActivity(), TrackListMvc.Listener, PermissionManager.PermissionResponseCallback {
-
-    private val REQ_READ_PERM = 994
+class TracksListActivity : BaseActivity(), TrackListMvc.Listener,
+    PermissionManager.PermissionResponseCallback {
 
     private var mTrackList = ArrayList<MusicTrackDetails>()
 
@@ -48,13 +47,9 @@ class TracksListActivity : BaseActivity(), TrackListMvc.Listener, PermissionMana
 
 
     private fun loadTracks() {
-
         val c = MyApplication.appInstance!!.trackManager!!.initAllTracks(mTrackList)
-
         mViewMvc.updateMusicList(mTrackList)
-
         loadImageTask.execute(c)
-
     }
 
     private val loadImageTask = @SuppressLint("StaticFieldLeak")
@@ -75,35 +70,29 @@ class TracksListActivity : BaseActivity(), TrackListMvc.Listener, PermissionMana
     }
 
     private fun loadImagesForTracks(c: Cursor) {
-
         for (musicTrack in mTrackList) {
-
             val cursorAlbum = contentResolver.query(
-
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-
                 arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART),
-
                 MediaStore.Audio.Albums._ID + "=" + musicTrack.musicFileAlbumId, null, null
-
             )
 
             if (cursorAlbum != null && cursorAlbum.moveToFirst()) {
-
                 val albumCoverPath =
                     cursorAlbum.getString(cursorAlbum.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
-
                 musicTrack.musicFileThumb = albumCoverPath
             }
-
             cursorAlbum?.close()
         }
-
         c.close()
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         mPermissionManager.rectifyPermissionResult(grantResults, permissions)
     }
@@ -124,9 +113,7 @@ class TracksListActivity : BaseActivity(), TrackListMvc.Listener, PermissionMana
         loadTracks()
     }
 
-    override fun onPermissionDenied() {
-
-    }
+    override fun onPermissionDenied() {}
 
 
 }
