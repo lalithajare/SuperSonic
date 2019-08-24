@@ -9,9 +9,11 @@ package com.supersonic.app.tracks.screens.tracklist
 
 import android.content.Context
 import android.view.View
+import com.supersonic.app.common.ObservableViewMvc
+import com.supersonic.app.common.ViewMvc
 import com.supersonic.app.models.MusicTrackDetails
 
-interface TrackListMvc {
+interface TrackListMvc : ObservableViewMvc<TrackListMvc.Listener> {
 
     interface Listener {
 
@@ -19,9 +21,6 @@ interface TrackListMvc {
 
     }
 
-    fun getRootView(): View
-    fun registerListener(listener: TrackListMvc.Listener)
-    fun unregisterListener(listener: TrackListMvc.Listener)
     fun getContext(): Context?
     fun initViews()
     fun setAdapter()

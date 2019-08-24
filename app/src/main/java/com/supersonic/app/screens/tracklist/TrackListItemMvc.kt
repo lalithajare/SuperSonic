@@ -1,5 +1,3 @@
- 
-
 /*
  *  Created by Mr. Lalit Nandakumar Hajare
  *  This code demonstrates the coding capabilities of Mr. Lalit Nandakumar Hajare.
@@ -10,17 +8,16 @@
 package com.supersonic.app.screens.tracklist
 
 import android.view.View
+import com.supersonic.app.common.ObservableViewMvc
+import com.supersonic.app.common.ViewMvc
 import com.supersonic.app.models.MusicTrackDetails
 
-interface TrackListItemMvc {
+interface TrackListItemMvc : ObservableViewMvc<TrackListItemMvc.Listener> {
 
     interface Listener {
         fun onTrackClicked(musicTrackDetails: MusicTrackDetails)
     }
 
-    fun getRootView():View
-    fun registerListener(listener: Listener)
-    fun unregisterListener(listener: Listener)
     fun bindMusicTrack(musicTrackDetails: MusicTrackDetails)
 
 }

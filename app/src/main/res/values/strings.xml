@@ -9,4 +9,5 @@
     <string name="app_name">SuperSonic</string>
     <string name="track_details">Tracks Details</string>
     <string name="tracks">Tracks</string>
+    <string name="no_tracks_found">No tracks found</string>
 </resources>

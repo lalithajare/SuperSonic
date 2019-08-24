@@ -23,9 +23,7 @@ class TracksListActivity : BaseActivity(), TrackListMvc.Listener,
     PermissionManager.PermissionResponseCallback {
 
     private var mTrackList = ArrayList<MusicTrackDetails>()
-
     private lateinit var mPermissionManager: PermissionManager
-
     private lateinit var mViewMvc: TrackListMvc
 
 
@@ -37,17 +35,11 @@ class TracksListActivity : BaseActivity(), TrackListMvc.Listener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         mPermissionManager = PermissionManager(this, this)
-
         mViewMvc = TrackListMvcImpl(layoutInflater, null)
-
         mViewMvc.registerListener(this)
-
         setContentView(mViewMvc.getRootView())
-
         initActionbar("Tracks")
-
         mPermissionManager.checkPermissions(permissions)
 
     }

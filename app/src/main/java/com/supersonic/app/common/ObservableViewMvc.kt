@@ -7,13 +7,10 @@
 
 package com.supersonic.app.common
 
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
+interface ObservableViewMvc<ListenerType> : ViewMvc {
 
-abstract class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun registerListener(listenerType: ListenerType)
 
-    abstract fun onBindView(model : Any)
+    fun unregisterListener(listenerType: ListenerType)
 
 }

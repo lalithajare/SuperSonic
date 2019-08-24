@@ -14,43 +14,36 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.supersonic.app.R
+import com.supersonic.app.common.BaseObservableViewMvc
+import com.supersonic.app.common.ObservableViewMvc
 import com.supersonic.app.models.MusicTrackDetails
+import com.supersonic.app.tracks.screens.tracklist.TrackListMvc
 
-class TrackListItemMvcImpl(inflater: LayoutInflater, parent: ViewGroup) : TrackListItemMvc {
+class TrackListItemMvcImpl(inflater: LayoutInflater, parent: ViewGroup) :
+
+    BaseObservableViewMvc<TrackListItemMvc.Listener>()
+    , TrackListItemMvc {
 
 
-    var mRootView: View = inflater.inflate(R.layout.item_music_file, parent, false)
     var mMusicTrackDetails: MusicTrackDetails? = null
 
     private val imgThumb: ImageView
     private val txtMusicTitle: TextView
     private val txtMusicAuthor: TextView
 
-    private val listeners = ArrayList<TrackListItemMvc.Listener>()
-
     init {
 
-        imgThumb = mRootView.findViewById(R.id.img_thumb)
-        txtMusicTitle = mRootView.findViewById(R.id.txt_music_title)
-        txtMusicAuthor = mRootView.findViewById(R.id.txt_music_author)
+        setRootView(inflater.inflate(R.layout.item_music_file, parent, false))
 
-        mRootView.setOnClickListener {
-            for (listener in listeners) {
+        imgThumb = findViewById(R.id.img_thumb)
+        txtMusicTitle = findViewById(R.id.txt_music_title)
+        txtMusicAuthor = findViewById(R.id.txt_music_author)
+
+        getRootView().setOnClickListener {
+            for (listener in getListeners()) {
                 listener.onTrackClicked(mMusicTrackDetails!!)
             }
         }
-    }
-
-    override fun getRootView(): View {
-        return mRootView
-    }
-
-    override fun registerListener(listener: TrackListItemMvc.Listener) {
-        listeners.add(listener)
-    }
-
-    override fun unregisterListener(listener: TrackListItemMvc.Listener) {
-        listeners.remove(listener)
     }
 
     override fun bindMusicTrack(musicTrackDetails: MusicTrackDetails) {
@@ -66,8 +59,9 @@ class TrackListItemMvcImpl(inflater: LayoutInflater, parent: ViewGroup) : TrackL
         }
 
         if (mMusicTrackDetails?.musicFileThumb != null && mMusicTrackDetails?.musicFileThumb!!.isNotBlank()) {
-            Glide.with(mRootView.context)
+            Glide.with(getRootView().context)
                 .load(musicTrackDetails.musicFileThumb)
+                .circleCrop()
                 .into(imgThumb)
         } else {
             imgThumb.setImageResource(android.R.drawable.ic_menu_crop)

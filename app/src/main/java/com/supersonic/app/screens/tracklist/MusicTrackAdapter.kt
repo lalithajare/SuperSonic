@@ -1,5 +1,3 @@
- 
-
 /*
  *  Created by Mr. Lalit Nandakumar Hajare
  *  This code demonstrates the coding capabilities of Mr. Lalit Nandakumar Hajare.
@@ -14,13 +12,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.supersonic.app.models.MusicTrackDetails
 import com.supersonic.app.R
-import com.supersonic.app.common.ViewHolder
 import com.supersonic.app.screens.tracklist.TrackListItemMvc
 import com.supersonic.app.screens.tracklist.TrackListItemMvcImpl
 
 class MusicTrackAdapter(
-    var listener: TrackListItemMvc.Listener
-) : RecyclerView.Adapter<MusicTrackAdapter.MusicTrackViewHolder>() {
+    var listener: TrackListMvc.Listener
+) : RecyclerView.Adapter<MusicTrackAdapter.MusicTrackViewHolder>(), TrackListItemMvc.Listener {
 
     var list: ArrayList<MusicTrackDetails>? = null
 
@@ -28,7 +25,7 @@ class MusicTrackAdapter(
 
         val viewMvc = TrackListItemMvcImpl(LayoutInflater.from(parent.context), parent)
 
-        viewMvc.registerListener(listener)
+        viewMvc.registerListener(this)
 
         return MusicTrackViewHolder(viewMvc)
     }
@@ -43,5 +40,9 @@ class MusicTrackAdapter(
 
     class MusicTrackViewHolder(var mViewMvc: TrackListItemMvc) :
         RecyclerView.ViewHolder(mViewMvc.getRootView())
+
+    override fun onTrackClicked(musicTrackDetails: MusicTrackDetails) {
+        listener.onTrackClickedListener(musicTrackDetails)
+    }
 
 }
