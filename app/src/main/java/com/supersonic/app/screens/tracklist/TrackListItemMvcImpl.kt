@@ -1,18 +1,8 @@
 /*
- * Copyright (c) 24/8/19 4:22 PM
- *
- *  Lalit Hajare  CONFIDENTIAL
- *
- *  All Rights Reserved.
- *
- *  NOTICE:  All information contained herein is, and remains
- *  the property of Mr. Lalit Nandakumar Hajare  Incorporated and its suppliers,
- *  if any.
- *  Dissemination of this information or reproduction of this material
- *  is strictly forbidden unless prior written permission is obtained
- *  from Lalit Hajare, lalit.appsmail@gmail.com.
- *
- *
+ *  Created by Mr. Lalit Nandakumar Hajare
+ *  This code demonstrates the coding capabilities of Mr. Lalit Nandakumar Hajare.
+ *  The sole purpose of this application is to help recruiters showcase the skills that I,
+ *   Mr. Lalit Nandakumar Hajare, posses.
  */
 
 package com.supersonic.app.screens.tracklist

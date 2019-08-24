@@ -1,11 +1,10 @@
+ 
+
 /*
- * Created on 24/8/19 4:13 PM --> MM/dd/yyyy
- *
- * This code is generated from machine belonging to Lalit N. Hajare, Software Engineer III, Silicus Technologies,
- *  Aundh IT Park, Bopodi, Bhau Patil Marg, Pune - 411020.
- *
- *  Last modified on 24/8/19 4:13 PM --> MM/dd/yyyy
- *
+ *  Created by Mr. Lalit Nandakumar Hajare
+ *  This code demonstrates the coding capabilities of Mr. Lalit Nandakumar Hajare.
+ *  The sole purpose of this application is to help recruiters showcase the skills that I,
+ *   Mr. Lalit Nandakumar Hajare, posses.
  */
 
 package com.supersonic.app.screens.tracklist

@@ -1,3 +1,10 @@
+/*
+ *  Created by Mr. Lalit Nandakumar Hajare
+ *  This code demonstrates the coding capabilities of Mr. Lalit Nandakumar Hajare.
+ *  The sole purpose of this application is to help recruiters showcase the skills that I,
+ *   Mr. Lalit Nandakumar Hajare, posses.
+ */
+
 package com.supersonic.app.common
 
 import android.app.*
@@ -35,22 +42,6 @@ class MusicService : Service() {
 
             }
         }
-
-//        class NotificationPlaybackHandler : BroadcastReceiver() {
-//
-//            override fun onReceive(context: Context, intent: Intent) {
-//
-//                Toast.makeText(context, "Playback Clicked", Toast.LENGTH_SHORT).show()
-//                if (isTrackRunning) {
-//                    mTracksManager?.pauseAudio()
-//                    isTrackRunning = false
-//                } else {
-//                    mTracksManager?.resumeAudio()
-//                    isTrackRunning = true
-//                }
-//
-//            }
-//        }
 
     }
 

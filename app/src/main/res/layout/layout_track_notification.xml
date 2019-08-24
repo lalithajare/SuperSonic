@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+  ~  Created by Mr. Lalit Nandakumar Hajare
+  ~  This code demonstrates the coding capabilities of Mr. Lalit Nandakumar Hajare.
+  ~  The sole purpose of this application is to help recruiters showcase the skills that I,
+  ~   Mr. Lalit Nandakumar Hajare, posses.
+  -->
+
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/rel_notification_layout"
