@@ -13,9 +13,10 @@ import android.provider.MediaStore
 import com.supersonic.app.models.MusicTrackDetails
 import java.lang.RuntimeException
 import android.media.MediaPlayer
+import com.supersonic.app.common.MyApplication
 
 
-class TracksManager(var contentResolver: ContentResolver) : MediaPlayer.OnPreparedListener,
+class MusicTracksManager : MediaPlayer.OnPreparedListener,
     MediaPlayer.OnCompletionListener {
 
     companion object {
@@ -33,9 +34,16 @@ class TracksManager(var contentResolver: ContentResolver) : MediaPlayer.OnPrepar
     //Presently Running trackAlbumId
     private var mRunningTrackId: String = ""
 
+    private var mContentResolver: ContentResolver? = null
+
+    init {
+        mContentResolver = MyApplication.appInstance!!.contentResolver
+    }
+
 
     fun initAllTracks(trackList: ArrayList<MusicTrackDetails>): Cursor {
-        val cursor = contentResolver.query(
+
+        val cursor = mContentResolver!!.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             arrayOf(
                 MediaStore.Audio.Media.ALBUM,
@@ -77,7 +85,8 @@ class TracksManager(var contentResolver: ContentResolver) : MediaPlayer.OnPrepar
                     cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
                 musicTrack.musicFileDisplayName =
                     cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                musicTrack.musicFileUrl = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                musicTrack.musicFileUrl =
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
                 musicTrack.musicFileDuration =
                     cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                 musicTrack.musicFileYear =
@@ -94,7 +103,7 @@ class TracksManager(var contentResolver: ContentResolver) : MediaPlayer.OnPrepar
 
     fun getTracksInBurst(trackList: ArrayList<MusicTrackDetails>): Cursor {
 
-        val cursor = contentResolver.query(
+        val cursor = mContentResolver!!.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             arrayOf(
                 MediaStore.Audio.Media.ALBUM,
@@ -227,7 +236,7 @@ class TracksManager(var contentResolver: ContentResolver) : MediaPlayer.OnPrepar
 
     private fun changeAudio(trackId: String) {
 
-        val c = contentResolver.query(
+        val cursor = mContentResolver!!.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             arrayOf(
                 MediaStore.Audio.Media.ALBUM,
@@ -250,37 +259,34 @@ class TracksManager(var contentResolver: ContentResolver) : MediaPlayer.OnPrepar
             null
         )
 
-        if (c != null) {
-            while (c.moveToNext()) {
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
                 val musicTrack = MusicTrackDetails("")
                 musicTrack.musicFileAlbum =
-                    c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM))
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
                 musicTrack.musicFileArtist =
-                    c.getString(c.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
                 musicTrack.musicFileTrackId =
-                    c.getString(c.getColumnIndex(MediaStore.Audio.Media.TRACK))
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK))
 
                 musicTrack.musicFileAlbumId =
-                    java.lang.Long.valueOf(c.getString(c.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)))
+                    java.lang.Long.valueOf(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)))
 
                 musicTrack.musicFileTitle =
-                    c.getString(c.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
                 musicTrack.musicFileDisplayName =
-                    c.getString(c.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                musicTrack.musicFileUrl = c.getString(c.getColumnIndex(MediaStore.Audio.Media.DATA))
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                musicTrack.musicFileUrl =
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
                 musicTrack.musicFileDuration =
-                    c.getString(c.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                 musicTrack.musicFileYear =
-                    c.getString(c.getColumnIndex(MediaStore.Audio.Media.YEAR))
-
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.YEAR))
                 stopAudio()
-
                 mediaPlayer!!.reset()
-
                 playAudio(musicTrack.musicFileUrl!!)
-
+                cursor.close()
                 return
-
             }
         } else {
             // ERROR

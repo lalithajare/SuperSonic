@@ -36,19 +36,22 @@ class TracksListActivity : BaseActivity(), TrackListMvc.Listener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mPermissionManager = PermissionManager(this, this)
-        mViewMvc = TrackListMvcImpl(layoutInflater, null)
+
+        mViewMvc = getCompositionRoot().getViewMvcFactory().getTrackListMvc(null)
         mViewMvc.registerListener(this)
+
         setContentView(mViewMvc.getRootView())
         initActionbar("Tracks")
+
         mPermissionManager.checkPermissions(permissions)
 
     }
 
 
     private fun loadTracks() {
-        val c = MyApplication.appInstance!!.trackManager!!.initAllTracks(mTrackList)
+        val cursor = getCompositionRoot().getMusicTracksManager().initAllTracks(mTrackList)
         mViewMvc.updateMusicList(mTrackList)
-        loadImageTask.execute(c)
+        loadImageTask.execute(cursor)
     }
 
     private val loadImageTask = @SuppressLint("StaticFieldLeak")

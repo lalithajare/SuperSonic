@@ -16,11 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.supersonic.app.R
 import com.supersonic.app.common.BaseObservableViewMvc
+import com.supersonic.app.common.ViewMvcFactory
 import com.supersonic.app.models.MusicTrackDetails
-import com.supersonic.app.screens.tracklist.TrackListItemMvc
 
 
-class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?) : BaseObservableViewMvc<TrackListMvc.Listener>(),
+class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?, viewMvcFactory: ViewMvcFactory) : BaseObservableViewMvc<TrackListMvc.Listener>(),
     TrackListMvc
     , TrackListMvc.Listener {
 
@@ -33,7 +33,7 @@ class TrackListMvcImpl(inflater: LayoutInflater, viewGroup: ViewGroup?) : BaseOb
     init {
         setRootView(inflater.inflate(R.layout.layout_track_list, viewGroup, false))
         initViews()
-        mMusicAdapter = MusicTrackAdapter(this)
+        mMusicAdapter = MusicTrackAdapter(this,viewMvcFactory)
 
     }
 

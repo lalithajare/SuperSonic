@@ -33,7 +33,7 @@ class MusicService : Service() {
 
     companion object {
         private var isTrackRunning = false
-        private var mTracksManager = MyApplication.appInstance!!.trackManager
+        private var mTracksManager = MyApplication.appInstance!!.mTrackManagerMusic
 
         class NotificationCloseButtonHandler : BroadcastReceiver() {
 

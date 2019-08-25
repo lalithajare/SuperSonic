@@ -11,22 +11,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.supersonic.app.models.MusicTrackDetails
-import com.supersonic.app.R
+import com.supersonic.app.common.ViewMvcFactory
 import com.supersonic.app.screens.tracklist.TrackListItemMvc
 import com.supersonic.app.screens.tracklist.TrackListItemMvcImpl
 
 class MusicTrackAdapter(
-    var listener: TrackListMvc.Listener
+    var listener: TrackListMvc.Listener,
+    var viewMvcFactory: ViewMvcFactory
 ) : RecyclerView.Adapter<MusicTrackAdapter.MusicTrackViewHolder>(), TrackListItemMvc.Listener {
 
     var list: ArrayList<MusicTrackDetails>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicTrackViewHolder {
-
-        val viewMvc = TrackListItemMvcImpl(LayoutInflater.from(parent.context), parent)
-
+        val viewMvc = viewMvcFactory.getTrackListItemMvc(parent)
         viewMvc.registerListener(this)
-
         return MusicTrackViewHolder(viewMvc)
     }
 

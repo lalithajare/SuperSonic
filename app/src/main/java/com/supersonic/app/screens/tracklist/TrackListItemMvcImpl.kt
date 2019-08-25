@@ -19,7 +19,7 @@ import com.supersonic.app.common.ObservableViewMvc
 import com.supersonic.app.models.MusicTrackDetails
 import com.supersonic.app.tracks.screens.tracklist.TrackListMvc
 
-class TrackListItemMvcImpl(inflater: LayoutInflater, parent: ViewGroup) :
+class TrackListItemMvcImpl(inflater: LayoutInflater, parent: ViewGroup?) :
 
     BaseObservableViewMvc<TrackListItemMvc.Listener>()
     , TrackListItemMvc {
